@@ -13,5 +13,24 @@ Poker-Face is a texas hold'em poker engine implementation written in Rust. It ev
 Example of usage of the library:
 
 ```rust
-TODO
+Poker Face 0.1.0 - 🦀 for ♠️ ♣️ ♥️ ♦️
+Prehashing cards...
+
+1. Let's shuffle a deck...
+ 9♥️   7♥️   K♦️   4♦️   2♣️   10♠️   8♥️   4♥️   3♥️   2♠️   J♦️   Q♠️   5♥️  
+ 10♦️   K♠️   3♣️   K♥️   A♥️   8♣️   8♠️   A♠️   K♣️   5♦️   3♠️   6♠️   8♦️  
+ 7♦️   7♣️   5♠️   10♣️   J♣️   9♠️   6♥️   9♦️   6♦️   A♣️   9♣️   Q♥️   3♦️  
+ 4♠️   6♣️   10♥️   2♦️   5♣️   J♥️   4♣️   Q♣️   2♥️   J♠️   Q♦️   7♠️   A♦️  
+
+2. Let's take (borrow) 2 hands of 5 cards each from the deck
+Player 1:  9♥️   7♥️   K♦️   4♦️   2♣️  
+
+Player 2:  10♠️   8♥️   4♥️   3♥️   2♠️  
+
+
+3. Let's evaluate the hands...
+
+4. Celebrate the winner:
+The winner is Player 1
+
 ```
