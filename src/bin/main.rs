@@ -21,8 +21,8 @@ fn main() {
     println!("\n3. Let's evaluate the hands...");
     //let score1 = deck.eval5(hand_p1);
     // let score2 = deck.eval5(hand_p1);
-    println!("Player 1 has a {}", score1);
-    println!("Player 2 has a {}", score2);
+    // println!("Player 1 has a {}", score1);
+    // println!("Player 2 has a {}", score2);
 
     println!("\n4. Celebrate the winner:");
     println!("The winner is Player 1\n");
