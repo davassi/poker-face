@@ -26,8 +26,8 @@ pub enum Suit {
 /// The [`Card`] struct. It represents a card, composed by a [`Suit`] enum and a rank value.
 ///
 /// The range of rank values is described as follows:
-/// K,   Q,  J, 10, 9, 8, 7, 6, 5, 4, 3, 2, A
-/// 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+///  A,  K,  Q,  J, 10, 9, 8, 7, 6, 5, 4, 3, 2
+/// 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2
 ///
 #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
 pub struct Card {
@@ -58,7 +58,7 @@ impl Display for Card {
         write!(f, " ")?;
         match self.num {
             n @ 2..=10 => write!(f, "{n}"),
-            1 => write!(f, "A"),
+            14 => write!(f, "A"),
             11 => write!(f, "J"),
             12 => write!(f, "Q"),
             13 => write!(f, "K"),
@@ -75,18 +75,28 @@ impl Display for Card {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, strum_macros::Display)]
+/// The [`Rank`] enum represents the standard poker hand ranks from highest to lowest
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy, strum_macros::Display)]
 pub enum Rank {
+    ///  1. Royal Flush
+    ///
+    /// The highest rank possible, consisting of the Ace, King, Queen, Jack, and Ten all of the same suit.
     RoyalFlush,
     StraightFlush,
     FourOfAKind,
     FullHouse,
+    /// 5. Flush
+    ///
+    /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
     Flush,
     Straight,
     ThreeOfAKind,
     TwoPair,
     OnePair,
-    HighCard,
+    /// 10. High Card
+    ///
+    /// When a hand does not fall into any of the above categories, it is judged based on the highest individual card. So if no player has even one pair, the player with the highest card in their hand wins.
+    HighCard(Card),
     None,
 }
 
@@ -99,7 +109,7 @@ pub struct Hand {
 impl Hand {
     pub fn sort(&mut self) -> () {
         self.hand.sort();
-    } 
+    }
 
     /// Returns a reference to the Card slice of this [`Hand`].
     pub const fn get_hand_slice(&self) -> &[Card; 5] {
@@ -122,7 +132,7 @@ impl Deck {
         let mut deck: Vec<Card> = Vec::new();
 
         for suit in Suit::iter() {
-            for num in 1..=13 {
+            for num in 2..=14 {
                 let card = Card::new(suit, num);
                 deck.push(card);
                 card_hash.insert(card, CARDS[counter]);
@@ -164,3 +174,29 @@ impl Display for Deck {
         write!(f, "")
     }
 }
+
+
+/*
+2. Straight Flush
+
+Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
+3. Four of a Kind (Quads)
+
+A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
+4. Full House
+
+A hand containing three cards of one rank and two cards of another rank. For example, a hand with three 8s and two Jacks would be a full house, often noted as "8s full of Jacks."
+
+6. Straight
+
+Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
+7. Three of a Kind (Trips or Set)
+
+Three cards of the same rank and two unrelated cards. An example would be three Queens and two unrelated cards.
+8. Two Pair
+
+Two different pairs of cards and one unrelated card. For example, a hand with two 10s, two 9s, and an unrelated card would be "two pair."
+9. One Pair
+
+Two cards of the same rank and three unrelated cards. An example would be two 7s and three unrelated cards.
+ */

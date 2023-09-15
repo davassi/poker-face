@@ -11,7 +11,7 @@ pub struct FastEvaluator;
 impl FastEvaluator {
     pub fn rank_name(rank: u64) -> Rank {
         match rank {
-            0..=1276 => Rank::HighCard,
+            0..=1276 => Rank::HighCard(Card { suit: Suit::Hearts, num: 13 }), // placecholder todo!()
             1277..=4136 => Rank::OnePair,
             4137..=4994 => Rank::TwoPair,
             4995..=5852 => Rank::ThreeOfAKind,
