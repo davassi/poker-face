@@ -31,8 +31,8 @@ pub enum Suit {
 ///
 #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
 pub struct Card {
-    suit: Suit,
-    num: u8,
+    pub suit: Suit,
+    pub num: u8,
 }
 
 impl Card {
