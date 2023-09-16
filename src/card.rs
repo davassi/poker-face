@@ -216,13 +216,6 @@ Any sequence of five consecutive cards all of the same suit. For instance, a han
 6. Straight
 
 Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
-
-8. Two Pair
-
-Two different pairs of cards and one unrelated card. For example, a hand with two 10s, two 9s, and an unrelated card would be "two pair."
-9. One Pair
-
-Two cards of the same rank and three unrelated cards. An example would be two 7s and three unrelated cards.
  */
 
 #[macro_export]

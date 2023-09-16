@@ -25,7 +25,13 @@ pub enum Rank {
     ///
     /// Three cards of the same rank and two unrelated cards. An example would be three Queens and two unrelated cards.
     ThreeOfAKind,
+    /// 8. Two Pair
+    /// 
+    /// Two different pairs of cards and one unrelated card. For example, a hand with two 10s, two 9s, and an unrelated card would be "two pair."
     TwoPair,
+    /// 9. One Pair
+    /// 
+    /// Two cards of the same rank and three unrelated cards. An example would be two 7s and three unrelated cards.
     OnePair,
     /// 10. High Card
     ///
@@ -79,6 +85,16 @@ impl MatchHandEvaluator {
             {
                 Rank::ThreeOfAKind
             }
+            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if (v1 == v2 && v3 == v4 || v2 == v3 && v4 == v5) =>
+            {
+                Rank::TwoPair
+            }
+            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if (v1 == v2 || v2 == v3 || v3 == v4 || v4 == v5) =>
+            {
+                Rank::OnePair
+            }
 
             hand => Rank::HighCard(hand[0]),
         }
@@ -130,5 +146,11 @@ mod test {
     fn rank_3_of_a_kind() {
         assert_rank!(hand!["Kd", "Kh", "Kc", "10s", "8d"], Rank::ThreeOfAKind);
         assert_rank!(hand!["2d", "Jh", "Qc", "Qs", "Qd"], Rank::ThreeOfAKind);
+    }
+
+    #[test]
+    fn rank_two_pairs() {
+        assert_rank!(hand!["Kd", "Kh", "Jc", "Js", "10d"], Rank::TwoPair);
+        assert_rank!(hand!["9d", "5h", "5c", "6s", "6d"], Rank::TwoPair);
     }
 }
