@@ -153,4 +153,10 @@ mod test {
         assert_rank!(hand!["Kd", "Kh", "Jc", "Js", "10d"], Rank::TwoPair);
         assert_rank!(hand!["9d", "5h", "5c", "6s", "6d"], Rank::TwoPair);
     }
+
+    #[test]
+    fn rank_one_pairs() {
+        assert_rank!(hand!["Kd", "Kh", "2c", "Js", "10d"], Rank::OnePair);
+        assert_rank!(hand!["9d", "5h", "5c", "3s", "6d"], Rank::OnePair);
+    }
 }
