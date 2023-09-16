@@ -40,24 +40,21 @@ impl MatchHandEvaluator {
     }
 }
 
-
+macro_rules! assert_rank {
+    ($hand:expr, $rank:expr) => {
+        assert_eq!(MatchHandEvaluator::slow_eval(&mut $hand), $rank);
+    };
+}
 
 #[cfg(test)]
 mod test {
     use super::MatchHandEvaluator;
     use crate::card::{Card, Hand, Rank, Suit, self};
     use crate::newcard;
+    use crate::hand;
 
     #[test]
     fn rank_royal_flush() {
-        let cards = [
-            newcard!["Ah"],
-            newcard!["Kh"],
-            newcard!["Jh"],
-            newcard!["Qh"],
-            newcard!["10h"],
-        ];
-        let mut hand = Hand::new(cards);
-        assert_eq!(MatchHandEvaluator::slow_eval(&mut hand), Rank::RoyalFlush);
+        assert_rank!(hand!["Ad","Kd","Qd","Jd","10d"], Rank::RoyalFlush);
     }
 }

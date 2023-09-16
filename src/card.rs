@@ -170,7 +170,7 @@ impl Hand {
         &self.hand
     }
 
-    /// An handy constructor for tests
+    /// An handy constructor for tests and macros
     ///
     pub fn new(hand: [Card; 5]) -> Hand {
         Hand { hand }
@@ -270,10 +270,11 @@ macro_rules! newcard {
     };
 }
 
-macro_rules! newhand {
+#[macro_export]
+macro_rules! hand {
   
     ($c:expr,$c1:expr,$c2:expr,$c3:expr,$c4:expr) => {
-        [newcard![$c],newcard![$c1],newcard![$c2],newcard![$c3],newcard![$c4]]
+        Hand::new([newcard![$c],newcard![$c1],newcard![$c2],newcard![$c3],newcard![$c4]])
     };
 }
 
@@ -299,7 +300,7 @@ mod tests {
     #[test]
     fn test_try_from_valid_hand() {
     
-        let hand = newhand!["Ad","Kd","Qd","Jd","10d"];
-        assert_eq!(hand[0], Card::new(14, Suit::Diamonds));
+        let hand = hand!["Ad","Kd","Qd","Jd","10d"];
+        assert_eq!(hand.hand[0], Card::new(14, Suit::Diamonds));
     }
 }
