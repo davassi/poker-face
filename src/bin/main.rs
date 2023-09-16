@@ -1,4 +1,4 @@
-use pokerust::{card::*, match_evaluator::MatchHandEvaluator};
+use pokerust::{card::*, match_evaluator::{MatchHandEvaluator, Rank}};
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -20,8 +20,8 @@ fn main() {
     println!("Player 2 has: {}", hand_p2);
 
     println!("\n3. Let's evaluate the hands...");
-    let score1: Rank = MatchHandEvaluator::slow_eval(&mut hand_p1);
-    let score2: Rank = MatchHandEvaluator::slow_eval(&mut hand_p2);
+    let score1: Rank = MatchHandEvaluator::match_eval(&mut hand_p1);
+    let score2: Rank = MatchHandEvaluator::match_eval(&mut hand_p2);
 
     println!("Player 1 has a {}", score1);
     match score1 {

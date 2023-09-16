@@ -124,31 +124,6 @@ impl Display for Card {
     }
 }
 
-/// The [`Rank`] enum represents the standard poker hand ranks from highest to lowest
-#[derive(Debug, PartialEq, PartialOrd, Clone, Copy, strum_macros::Display)]
-pub enum Rank {
-    ///  1. Royal Flush
-    ///
-    /// The highest rank possible, consisting of the Ace, King, Queen, Jack, and Ten all of the same suit.
-    RoyalFlush,
-    StraightFlush,
-    FourOfAKind,
-    FullHouse,
-    /// 5. Flush
-    ///
-    /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
-    Flush,
-    Straight,
-    ThreeOfAKind,
-    TwoPair,
-    OnePair,
-    /// 10. High Card
-    ///
-    /// When a hand does not fall into any of the above categories, it is judged based on the highest individual card. So if no player has even one pair, the player with the highest card in their hand wins.
-    HighCard(Card),
-    None,
-}
-
 /// An array of 5 cards compose a [`Hand`].
 ///
 #[derive(Debug, PartialEq, Clone, Eq)]
@@ -245,9 +220,7 @@ impl Display for Deck {
 2. Straight Flush
 
 Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
-3. Four of a Kind (Poker)
 
-A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
 4. Full House
 
 A hand containing three cards of one rank and two cards of another rank. For example, a hand with three 8s and two Jacks would be a full house, often noted as "8s full of Jacks."

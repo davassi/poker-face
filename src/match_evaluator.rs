@@ -1,14 +1,44 @@
-use crate::{
-    card::{Card, Hand, Rank, Suit},
-    hash_tables::{CARDS, FLUSHES, HASH_ADJUST, HASH_VALUES, UNIQUE5},
-};
+use crate::card::{Card, Hand, Suit};
+
+/// The [`Rank`] enum represents the standard poker hand ranks from highest to lowest
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy, strum_macros::Display)]
+pub enum Rank {
+    ///  1. Royal Flush
+    ///
+    /// The highest rank possible, consisting of the Ace, King, Queen, Jack, and Ten all of the same suit.
+    RoyalFlush,
+    StraightFlush,
+    /// 3. Four of a Kind (Poker)
+    ///
+    /// A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
+    FourOfAKind,
+    FullHouse,
+    /// 5. Flush
+    ///
+    /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
+    Flush,
+    Straight,
+    ThreeOfAKind,
+    TwoPair,
+    OnePair,
+    /// 10. High Card
+    ///
+    /// When a hand does not fall into any of the above categories, it is judged based on the highest individual card. So if no player has even one pair, the player with the highest card in their hand wins.
+    HighCard(Card),
+    None,
+}
 
 pub struct MatchHandEvaluator;
 
+/// The majestic [MatchHandEvaluator] implementation. 
+/// 
+/// It examines the properties of a hand using array matching and struct matching to determine which rank the hand belongs to.
+///
+///   
 impl MatchHandEvaluator {
     /// It evaluates the [Rank] of a [Hand]
     ///
-    pub fn slow_eval(hand: &mut Hand) -> Rank {
+    pub fn match_eval(hand: &mut Hand) -> Rank {
         // first let's sort the hand, that's the reason we need a mutable reference
         hand.sort();
 
@@ -48,16 +78,17 @@ impl MatchHandEvaluator {
 #[macro_export]
 macro_rules! assert_rank {
     ($hand:expr, $rank:expr) => {
-        assert_eq!(MatchHandEvaluator::slow_eval(&mut $hand), $rank);
+        assert_eq!(MatchHandEvaluator::match_eval(&mut $hand), $rank);
     };
 }
 
 #[cfg(test)]
 mod test {
     use super::MatchHandEvaluator;
-    use crate::card::{Card, Hand, Rank};
+    use crate::card::{Card, Hand};
     use crate::hand;
     use crate::newcard;
+    use super::Rank;
 
     #[test]
     fn rank_royal_flush() {
