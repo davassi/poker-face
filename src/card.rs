@@ -7,8 +7,6 @@ use std::hash::Hash;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-use crate::hash_tables::CARDS;
-
 use thiserror::Error;
 
 /// The [`Suit`] enum. It represents the categories into which the cards of a deck are divided: [`Suit::Hearts`], [`Suit::Diamonds`], [`Suit::Spades`], [`Suit::Clubs`]
@@ -111,7 +109,7 @@ impl Display for Card {
             13 => write!(f, "K"),
             12 => write!(f, "Q"),
             11 => write!(f, "J"),
-            _ => panic!("Indeed, that's a good reason to panic."),
+            _ => panic!("well, that's a good reason to panic."),
         }?;
         match self.suit {
             //
@@ -164,16 +162,12 @@ impl Deck {
     /// It creates a shuffled deck, ready to play.
     ///
     pub fn create_shuffled_deck() -> Deck {
-        let mut card_hash: HashMap<Card, u32> = HashMap::new();
-        let mut counter = 0;
+        
         let mut deck: Vec<Card> = Vec::new();
 
         for suit in Suit::iter() {
             for val in 2..=14 {
-                let card = Card::new(val, suit);
-                deck.push(card);
-                card_hash.insert(card, CARDS[counter]);
-                counter += 1;
+                deck.push(Card::new(val, suit));
             }
         }
         let mut rng = thread_rng();
@@ -181,10 +175,10 @@ impl Deck {
         Deck { deck, it: 0 }
     }
 
-    /// gets a hand from the deck.
+    /// It gets a [Hand] of 5 cards from the deck.
     ///
     pub fn hand(&mut self) -> Option<Hand> {
-        if self.it > 52 {
+        if self.it == 52 {
             return None; // deck is finisced!
         }
         let hand: Hand = Hand {
