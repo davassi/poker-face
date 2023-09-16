@@ -1,7 +1,5 @@
-//use log::debug;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use std::collections::HashMap;
 use std::fmt::Display;
 use std::hash::Hash;
 use strum::IntoEnumIterator;
@@ -214,10 +212,6 @@ impl Display for Deck {
 2. Straight Flush
 
 Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
-
-4. Full House
-
-A hand containing three cards of one rank and two cards of another rank. For example, a hand with three 8s and two Jacks would be a full house, often noted as "8s full of Jacks."
 
 6. Straight
 

@@ -12,6 +12,9 @@ pub enum Rank {
     ///
     /// A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
     FourOfAKind,
+    /// 4. Full House
+    /// 
+    /// A hand containing three cards of one rank and two cards of another rank. For example, a hand with three 8s and two Jacks would be a full house, often noted as "8s full of Jacks."
     FullHouse,
     /// 5. Flush
     ///
@@ -58,6 +61,11 @@ impl MatchHandEvaluator {
             {
                 Rank::FourOfAKind
             }
+            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if (v1 == v2 && v2 == v3 && v4 == v5 || v3 == v4 && v4 == v5 && v1 == v2) =>
+            {
+                Rank::FullHouse
+            }
             [Card { suit: s1, .. }, Card { suit: s2, .. }, Card { suit: s3, .. }, Card { suit: s4, .. }, Card { suit: s5, .. }]
                 if Self::suits(s1, s2, s3, s4, s5) =>
             {
@@ -102,5 +110,11 @@ mod test {
     fn rank_four_of_a_kind() {
         assert_rank!(hand!["Kd", "Kh", "Kc", "Ks", "Qd"], Rank::FourOfAKind);
         assert_rank!(hand!["Kd", "6h", "6c", "6s", "6d"], Rank::FourOfAKind);
+    }
+
+    #[test]
+    fn rank_full_house() {
+        assert_rank!(hand!["Kd", "Kh", "Kc", "8s", "8d"], Rank::FullHouse);
+        assert_rank!(hand!["2d", "2h", "Qc", "Qs", "Qd"], Rank::FullHouse);
     }
 }
