@@ -1,10 +1,10 @@
 [package]
-name = "pokerface"
+name = "poker-face"
 version = "0.1.0"
 edition = "2021"
 description = "A blazing fast library for the evaluation of Poker hands with lookup tables and perfect hashing"
-repository = "https://github.com/davassi/pokerface"
-homepage = "https://github.com/davassi/pokerface"
+repository = "https://github.com/davassi/poker-face"
+homepage = "https://github.com/davassi/poker-face"
 license = "MIT OR Apache-2.0"
 authors = ["Davassi <gianluigi.davassi@gmail.com>"]
 categories = ["command-line-interface","games","game development"]
@@ -36,8 +36,8 @@ opt-level = 3
 debug = true
 
 [[bin]]
-name = "pokerust"
+name = "pokerface"
 path = "src/bin/main.rs"
 
 [lib]
-name = "pokerust"
+name = "pokerface"

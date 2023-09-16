@@ -7,6 +7,9 @@ pub enum Rank {
     ///
     /// The highest rank possible, consisting of the Ace, King, Queen, Jack, and Ten all of the same suit.
     RoyalFlush,
+    /// 2. Straight Flush
+    /// 
+    /// Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
     StraightFlush,
     /// 3. Four of a Kind (Poker)
     ///
@@ -20,6 +23,9 @@ pub enum Rank {
     ///
     /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
     Flush,
+    /// 6. Straight
+    /// 
+    /// Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
     Straight,
     /// 7. Three of a Kind (Trips or Set)
     ///
@@ -65,6 +71,16 @@ impl MatchHandEvaluator {
             {
                 Rank::RoyalFlush
             }
+            [Card { suit: s1, val: v1 }, Card { suit: s2, val: v2 }, Card { suit: s3, val: v3 }, Card { suit: s4, val: v4 }, Card { suit: s5, val: v5 }]
+                if Self::seq(*v1,*v2,*v3,*v4,*v5) && Self::suits(s1, s2, s3, s4, s5) =>
+            {
+                Rank::StraightFlush
+            }
+            [Card { suit: s1, val: 14 }, Card { suit: s2, val: 5 }, Card { suit: s3, val: 4 }, Card { suit: s4, val: 3 }, Card { suit: s5, val: 2 }]
+                if Self::suits(s1, s2, s3, s4, s5) =>
+            {
+                Rank::StraightFlush // special case with Ace as 1
+            }
             [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 && v2 == v3 && v3 == v4 || v2 == v3 && v3 == v4 && v4 == v5) =>
             {
@@ -105,6 +121,12 @@ impl MatchHandEvaluator {
     fn suits(c0: &Suit, c1: &Suit, c2: &Suit, c3: &Suit, c4: &Suit) -> bool {
         c0 == c1 && c1 == c2 && c2 == c3 && c3 == c4
     }
+
+    /// function that checks if 5 given card ranks are a numeric sequence 
+    ///
+    fn seq(v0 : u8, v1 : u8, v2 : u8, v3 : u8, v4 : u8) -> bool {
+        v0 == (v1+1) && v1 == (v2+1) && v2 == (v3+1) && v3 == (v4+1)
+    }
 }
 
 #[macro_export]
@@ -128,6 +150,13 @@ mod test {
         assert_rank!(hand!["Ah", "Kh", "Qh", "Jh", "10h"], Rank::RoyalFlush);
         assert_rank!(hand!["Ac", "Kc", "Qc", "Jc", "10c"], Rank::RoyalFlush);
         assert_rank!(hand!["As", "Ks", "Qs", "Js", "10s"], Rank::RoyalFlush);
+    }
+
+    #[test]
+    fn rank_straight_flush() {
+        assert_rank!(hand!["5d", "4d", "3d", "2d", "Ad"], Rank::StraightFlush);
+        assert_rank!(hand!["10h", "9h", "8h", "7h", "6h"], Rank::StraightFlush);
+        assert_rank!(hand!["Ks", "Qs", "Js", "10s", "9s"], Rank::StraightFlush);
     }
 
     #[test]
@@ -158,5 +187,11 @@ mod test {
     fn rank_one_pairs() {
         assert_rank!(hand!["Kd", "Kh", "2c", "Js", "10d"], Rank::OnePair);
         assert_rank!(hand!["9d", "5h", "5c", "3s", "6d"], Rank::OnePair);
+    }
+
+    #[test]
+    fn rank_seq() {
+        assert_eq!(MatchHandEvaluator::seq(14, 13, 12, 11, 10),true);
+        assert_eq!(MatchHandEvaluator::seq(13, 14, 12, 11, 5),false);
     }
 }

@@ -53,13 +53,13 @@ impl Ord for Card {
 
 #[derive(Error, Debug)]
 pub enum CardError {
-    #[error("the card string is not the correct length")]
+    #[error("The card string is not the correct length")]
     InvalidLength,
 
-    #[error("the card value is invalid")]
+    #[error("The card Value Rank is invalid")]
     InvalidValue,
 
-    #[error("the card suit is invalid")]
+    #[error("The card Suit is invalid")]
     InvalidSuit,
 }
 
@@ -83,6 +83,10 @@ impl TryFrom<&str> for Card {
             '2'..='9' => val.to_digit(10).unwrap() as u8,
             _ => return Err(CardError::InvalidValue),
         };
+        
+        if val == 1 && card.len() ==2 {
+            return Err(CardError::InvalidValue);
+        }
 
         let suit = chars[if val == 10 { 2 } else { 1 }];
 
@@ -99,6 +103,7 @@ impl TryFrom<&str> for Card {
 }
 
 impl Display for Card {
+
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, " ")?;
         match self.val {
@@ -208,23 +213,13 @@ impl Display for Deck {
     }
 }
 
-/*
-2. Straight Flush
-
-Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
-
-6. Straight
-
-Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
- */
-
 #[macro_export]
 macro_rules! newcard {
     ($val:expr, $suit:tt) => {
         Card::new($val, $suit)
     };
     ($val:expr) => {
-        Card::try_from($val).unwrap()
+        Card::try_from($val).unwrap_or_else(|err| panic!("{}", err))
     };
 }
 

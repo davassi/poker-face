@@ -1,4 +1,4 @@
-use pokerust::{card::*, match_evaluator::{MatchHandEvaluator, Rank}};
+use pokerface::{card::*, match_evaluator::{MatchHandEvaluator, Rank}};
 
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 
