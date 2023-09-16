@@ -21,6 +21,9 @@ pub enum Rank {
     /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
     Flush,
     Straight,
+    /// 7. Three of a Kind (Trips or Set)
+    ///
+    /// Three cards of the same rank and two unrelated cards. An example would be three Queens and two unrelated cards.
     ThreeOfAKind,
     TwoPair,
     OnePair,
@@ -42,7 +45,7 @@ impl MatchHandEvaluator {
     /// It evaluates the [Rank] of a [Hand]
     ///
     pub fn match_eval(hand: &mut Hand) -> Rank {
-        // first let's sort the hand, that's the reason we need a mutable reference
+        // first let's sort the hand, that's the reason we need here a mutable reference
         hand.sort();
 
         println!("Sorted: {}", hand);
@@ -70,6 +73,11 @@ impl MatchHandEvaluator {
                 if Self::suits(s1, s2, s3, s4, s5) =>
             {
                 Rank::Flush
+            }
+            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if (v1 == v2 && v2 == v3 || v3 == v4 && v4 == v5) =>
+            {
+                Rank::ThreeOfAKind
             }
 
             hand => Rank::HighCard(hand[0]),
@@ -116,5 +124,11 @@ mod test {
     fn rank_full_house() {
         assert_rank!(hand!["Kd", "Kh", "Kc", "8s", "8d"], Rank::FullHouse);
         assert_rank!(hand!["2d", "2h", "Qc", "Qs", "Qd"], Rank::FullHouse);
+    }
+
+    #[test]
+    fn rank_3_of_a_kind() {
+        assert_rank!(hand!["Kd", "Kh", "Kc", "10s", "8d"], Rank::ThreeOfAKind);
+        assert_rank!(hand!["2d", "Jh", "Qc", "Qs", "Qd"], Rank::ThreeOfAKind);
     }
 }

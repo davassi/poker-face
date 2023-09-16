@@ -216,9 +216,7 @@ Any sequence of five consecutive cards all of the same suit. For instance, a han
 6. Straight
 
 Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
-7. Three of a Kind (Trips or Set)
 
-Three cards of the same rank and two unrelated cards. An example would be three Queens and two unrelated cards.
 8. Two Pair
 
 Two different pairs of cards and one unrelated card. For example, a hand with two 10s, two 9s, and an unrelated card would be "two pair."
