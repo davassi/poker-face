@@ -23,6 +23,11 @@ impl MatchHandEvaluator {
             {
                 Rank::RoyalFlush
             }
+            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if (v1 == v2 && v2 == v3 && v3 == v4 || v2 == v3 && v3 == v4 && v4 == v5) =>
+            {
+                Rank::FourOfAKind
+            }
             [Card { suit: s1, .. }, Card { suit: s2, .. }, Card { suit: s3, .. }, Card { suit: s4, .. }, Card { suit: s5, .. }]
                 if Self::suits(s1, s2, s3, s4, s5) =>
             {
@@ -40,6 +45,7 @@ impl MatchHandEvaluator {
     }
 }
 
+#[macro_export]
 macro_rules! assert_rank {
     ($hand:expr, $rank:expr) => {
         assert_eq!(MatchHandEvaluator::slow_eval(&mut $hand), $rank);
@@ -49,12 +55,21 @@ macro_rules! assert_rank {
 #[cfg(test)]
 mod test {
     use super::MatchHandEvaluator;
-    use crate::card::{Card, Hand, Rank, Suit, self};
-    use crate::newcard;
+    use crate::card::{Card, Hand, Rank};
     use crate::hand;
+    use crate::newcard;
 
     #[test]
     fn rank_royal_flush() {
-        assert_rank!(hand!["Ad","Kd","Qd","Jd","10d"], Rank::RoyalFlush);
+        assert_rank!(hand!["Ad", "Kd", "Qd", "Jd", "10d"], Rank::RoyalFlush);
+        assert_rank!(hand!["Ah", "Kh", "Qh", "Jh", "10h"], Rank::RoyalFlush);
+        assert_rank!(hand!["Ac", "Kc", "Qc", "Jc", "10c"], Rank::RoyalFlush);
+        assert_rank!(hand!["As", "Ks", "Qs", "Js", "10s"], Rank::RoyalFlush);
+    }
+
+    #[test]
+    fn rank_four_of_a_kind() {
+        assert_rank!(hand!["Kd", "Kh", "Kc", "Ks", "Qd"], Rank::FourOfAKind);
+        assert_rank!(hand!["Kd", "6h", "6c", "6s", "6d"], Rank::FourOfAKind);
     }
 }

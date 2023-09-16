@@ -59,10 +59,10 @@ impl Ord for Card {
 pub enum CardError {
     #[error("the card string is not the correct length")]
     InvalidLength,
-    
+
     #[error("the card value is invalid")]
     InvalidValue,
-    
+
     #[error("the card suit is invalid")]
     InvalidSuit,
 }
@@ -71,7 +71,6 @@ impl TryFrom<&str> for Card {
     type Error = CardError;
 
     fn try_from(card: &str) -> Result<Self, Self::Error> {
-    
         if card.len() != 2 && card.len() != 3 {
             return Err(CardError::InvalidLength);
         }
@@ -89,7 +88,7 @@ impl TryFrom<&str> for Card {
             _ => return Err(CardError::InvalidValue),
         };
 
-        let suit = chars[if val == 10 {2} else {1}];
+        let suit = chars[if val == 10 { 2 } else { 1 }];
 
         let suit = match suit.to_ascii_lowercase() {
             'h' => Suit::Hearts,
@@ -151,6 +150,7 @@ pub enum Rank {
 }
 
 /// An array of 5 cards compose a [`Hand`].
+///
 #[derive(Debug, PartialEq, Clone, Eq)]
 pub struct Hand {
     hand: [Card; 5],
@@ -177,6 +177,8 @@ impl Hand {
     }
 }
 
+/// A vector of 52 cards compose a [`Deck`], plus an iterator to help getting (/borrowing) cards out of the deck.
+///
 #[derive(Debug, PartialEq, Clone)]
 pub struct Deck {
     deck: Vec<Card>,
@@ -204,8 +206,12 @@ impl Deck {
         Deck { deck, it: 0 }
     }
 
-    // gets a hand from the deck. TODO: return None if the deck is finisced.
+    /// gets a hand from the deck.
+    ///
     pub fn hand(&mut self) -> Option<Hand> {
+        if self.it > 52 {
+            return None; // deck is finisced!
+        }
         let hand: Hand = Hand {
             hand: self.deck[self.it..=(self.it + 4)].try_into().ok()?,
         };
@@ -239,7 +245,7 @@ impl Display for Deck {
 2. Straight Flush
 
 Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
-3. Four of a Kind (Quads)
+3. Four of a Kind (Poker)
 
 A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
 4. Full House
@@ -272,19 +278,23 @@ macro_rules! newcard {
 
 #[macro_export]
 macro_rules! hand {
-  
     ($c:expr,$c1:expr,$c2:expr,$c3:expr,$c4:expr) => {
-        Hand::new([newcard![$c],newcard![$c1],newcard![$c2],newcard![$c3],newcard![$c4]])
+        Hand::new([
+            newcard![$c],
+            newcard![$c1],
+            newcard![$c2],
+            newcard![$c3],
+            newcard![$c4],
+        ])
     };
 }
 
- #[cfg(test)]
+#[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_try_from_valid_card() {
-    
         let card = newcard!["Ad"];
         assert_eq!(card.val, 14);
         assert_eq!(card.suit, Suit::Diamonds);
@@ -299,8 +309,7 @@ mod tests {
 
     #[test]
     fn test_try_from_valid_hand() {
-    
-        let hand = hand!["Ad","Kd","Qd","Jd","10d"];
+        let hand = hand!["Ad", "Kd", "Qd", "Jd", "10d"];
         assert_eq!(hand.hand[0], Card::new(14, Suit::Diamonds));
     }
 }

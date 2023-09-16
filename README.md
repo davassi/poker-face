@@ -34,3 +34,15 @@ Player 2:  10♠️   8♥️   4♥️   3♥️   2♠️
 The winner is Player 1
 
 ```
+
+At programmatic level, there are some handy macros (newcard!, hand!, assert_rank!) implemented to deal with cards, hands and ranks. Example:
+
+```rust
+    assert_rank!(hand!["Ad","Kd","Qd","Jd","10d"], Rank::RoyalFlush);
+```
+
+or 
+
+```rust
+    assert_eq!(newcard!["Ah"], Card::new(14, Suit::Hearts));
+```
