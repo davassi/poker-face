@@ -1,4 +1,4 @@
-POKER FACE - ♥️♦️♣️♠️ 🦀
+POKER FACE - ♥️♦️♣️♠️
 ===========================
 
 [<img alt="github" src="https://img.shields.io/badge/github-davassi/davassi?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/poker-face/yarer)

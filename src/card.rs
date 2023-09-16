@@ -9,6 +9,8 @@ use strum_macros::EnumIter;
 
 use crate::hash_tables::CARDS;
 
+use thiserror::Error;
+
 /// The [`Suit`] enum. It represents the categories into which the cards of a deck are divided: [`Suit::Hearts`], [`Suit::Diamonds`], [`Suit::Spades`], [`Suit::Clubs`]
 ///
 #[derive(Debug, PartialEq, Clone, Copy, EnumIter, Eq, Hash)]
@@ -31,45 +33,93 @@ pub enum Suit {
 ///
 #[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
 pub struct Card {
+    pub val: u8,
     pub suit: Suit,
-    pub num: u8,
 }
 
 impl Card {
-    pub fn new(suit: Suit, num: u8) -> Self {
-        Card { suit, num }
+    pub fn new(val: u8, suit: Suit) -> Self {
+        Card { suit, val }
     }
 }
 
 impl PartialOrd for Card {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.num.partial_cmp(&other.num)
+        self.val.partial_cmp(&other.val)
     }
 }
 
 impl Ord for Card {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.num.cmp(&other.num)
+        self.val.cmp(&other.val)
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum CardError {
+    #[error("the card string is not the correct length")]
+    InvalidLength,
+    
+    #[error("the card value is invalid")]
+    InvalidValue,
+    
+    #[error("the card suit is invalid")]
+    InvalidSuit,
+}
+
+impl TryFrom<&str> for Card {
+    type Error = CardError;
+
+    fn try_from(card: &str) -> Result<Self, Self::Error> {
+    
+        if card.len() != 2 && card.len() != 3 {
+            return Err(CardError::InvalidLength);
+        }
+
+        let chars: Vec<char> = card.chars().collect();
+        let val = chars[0];
+
+        let val = match val {
+            'A' => 14,
+            'K' => 13,
+            'Q' => 12,
+            'J' => 11,
+            '1' => 10,
+            '2'..='9' => val.to_digit(10).unwrap() as u8,
+            _ => return Err(CardError::InvalidValue),
+        };
+
+        let suit = chars[if val == 10 {2} else {1}];
+
+        let suit = match suit.to_ascii_lowercase() {
+            'h' => Suit::Hearts,
+            's' => Suit::Spades,
+            'd' => Suit::Diamonds,
+            'c' => Suit::Clubs,
+            _ => return Err(CardError::InvalidSuit),
+        };
+
+        Ok(Card::new(val, suit))
     }
 }
 
 impl Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, " ")?;
-        match self.num {
+        match self.val {
             n @ 2..=10 => write!(f, "{n}"),
             14 => write!(f, "A"),
-            11 => write!(f, "J"),
-            12 => write!(f, "Q"),
             13 => write!(f, "K"),
+            12 => write!(f, "Q"),
+            11 => write!(f, "J"),
             _ => panic!("Indeed, that's a good reason to panic."),
         }?;
         match self.suit {
             //
-            Suit::Hearts => write!(f, "♥️"),
-            Suit::Spades => write!(f, "♠️"),
-            Suit::Diamonds => write!(f, "♦️"),
-            Suit::Clubs => write!(f, "♣️"),
+            Suit::Hearts => write!(f, "♥️"),   //H
+            Suit::Spades => write!(f, "♠️"),   //S
+            Suit::Diamonds => write!(f, "♦️"), //D
+            Suit::Clubs => write!(f, "♣️"),    //C
         }?;
         write!(f, " ")
     }
@@ -107,13 +157,23 @@ pub struct Hand {
 }
 
 impl Hand {
+    /// sorting the hand in a descenting order
+    ///
     pub fn sort(&mut self) -> () {
         self.hand.sort();
+        self.hand.reverse();
     }
 
-    /// Returns a reference to the Card slice of this [`Hand`].
+    /// Borrowing the cards of this [`Hand`].
+    ///
     pub const fn get_hand_slice(&self) -> &[Card; 5] {
         &self.hand
+    }
+
+    /// An handy constructor for tests
+    ///
+    pub fn new(hand: [Card; 5]) -> Hand {
+        Hand { hand }
     }
 }
 
@@ -132,8 +192,8 @@ impl Deck {
         let mut deck: Vec<Card> = Vec::new();
 
         for suit in Suit::iter() {
-            for num in 2..=14 {
-                let card = Card::new(suit, num);
+            for val in 2..=14 {
+                let card = Card::new(val, suit);
                 deck.push(card);
                 card_hash.insert(card, CARDS[counter]);
                 counter += 1;
@@ -175,7 +235,6 @@ impl Display for Deck {
     }
 }
 
-
 /*
 2. Straight Flush
 
@@ -200,3 +259,47 @@ Two different pairs of cards and one unrelated card. For example, a hand with tw
 
 Two cards of the same rank and three unrelated cards. An example would be two 7s and three unrelated cards.
  */
+
+#[macro_export]
+macro_rules! newcard {
+    ($val:expr, $suit:tt) => {
+        Card::new($val, $suit)
+    };
+    ($val:expr) => {
+        Card::try_from($val).unwrap()
+    };
+}
+
+macro_rules! newhand {
+  
+    ($c:expr,$c1:expr,$c2:expr,$c3:expr,$c4:expr) => {
+        [newcard![$c],newcard![$c1],newcard![$c2],newcard![$c3],newcard![$c4]]
+    };
+}
+
+ #[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_try_from_valid_card() {
+    
+        let card = newcard!["Ad"];
+        assert_eq!(card.val, 14);
+        assert_eq!(card.suit, Suit::Diamonds);
+
+        assert_eq!(newcard!["Ah"], Card::new(14, Suit::Hearts));
+        assert_eq!(newcard!["Kh"], Card::new(13, Suit::Hearts));
+        assert_eq!(newcard!["Qh"], Card::new(12, Suit::Hearts));
+        assert_eq!(newcard!["Jh"], Card::new(11, Suit::Hearts));
+        assert_eq!(newcard!["10h"], Card::new(10, Suit::Hearts));
+        assert_eq!(newcard!["9h"], Card::new(9, Suit::Hearts));
+    }
+
+    #[test]
+    fn test_try_from_valid_hand() {
+    
+        let hand = newhand!["Ad","Kd","Qd","Jd","10d"];
+        assert_eq!(hand[0], Card::new(14, Suit::Diamonds));
+    }
+}

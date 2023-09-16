@@ -22,7 +22,7 @@ fn main() {
     println!("\n3. Let's evaluate the hands...");
     let score1: Rank = MatchHandEvaluator::slow_eval(&mut hand_p1);
     let score2: Rank = MatchHandEvaluator::slow_eval(&mut hand_p2);
-    
+
     println!("Player 1 has a {}", score1);
     match score1 {
         Rank::HighCard(c) => println!("With highcard of value {c}"),
