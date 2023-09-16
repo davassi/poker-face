@@ -83,8 +83,8 @@ impl TryFrom<&str> for Card {
             '2'..='9' => val.to_digit(10).unwrap() as u8,
             _ => return Err(CardError::InvalidValue),
         };
-        
-        if val == 1 && card.len() ==2 {
+
+        if val == 1 && card.len() == 2 {
             return Err(CardError::InvalidValue);
         }
 
@@ -103,7 +103,6 @@ impl TryFrom<&str> for Card {
 }
 
 impl Display for Card {
-
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, " ")?;
         match self.val {
@@ -165,7 +164,6 @@ impl Deck {
     /// It creates a shuffled deck, ready to play.
     ///
     pub fn create_shuffled_deck() -> Deck {
-        
         let mut deck: Vec<Card> = Vec::new();
 
         for suit in Suit::iter() {

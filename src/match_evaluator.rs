@@ -8,7 +8,7 @@ pub enum Rank {
     /// The highest rank possible, consisting of the Ace, King, Queen, Jack, and Ten all of the same suit.
     RoyalFlush,
     /// 2. Straight Flush
-    /// 
+    ///
     /// Any sequence of five consecutive cards all of the same suit. For instance, a hand with the cards 5, 6, 7, 8, and 9 of diamonds is a straight flush.
     StraightFlush,
     /// 3. Four of a Kind (Poker)
@@ -16,7 +16,7 @@ pub enum Rank {
     /// A hand containing four cards of the same rank, along with one unrelated card. For example, four Kings and a 3 would constitute "four of a kind."
     FourOfAKind,
     /// 4. Full House
-    /// 
+    ///
     /// A hand containing three cards of one rank and two cards of another rank. For example, a hand with three 8s and two Jacks would be a full house, often noted as "8s full of Jacks."
     FullHouse,
     /// 5. Flush
@@ -24,7 +24,7 @@ pub enum Rank {
     /// Any five cards of the same suit, but not in sequence. For instance, if a player has five heart cards, they have a flush.
     Flush,
     /// 6. Straight
-    /// 
+    ///
     /// Five cards in a sequence, but not all of the same suit. An example would be a hand containing a 2, 3, 4, 5, and 6, of various suits.
     Straight,
     /// 7. Three of a Kind (Trips or Set)
@@ -32,11 +32,11 @@ pub enum Rank {
     /// Three cards of the same rank and two unrelated cards. An example would be three Queens and two unrelated cards.
     ThreeOfAKind,
     /// 8. Two Pair
-    /// 
+    ///
     /// Two different pairs of cards and one unrelated card. For example, a hand with two 10s, two 9s, and an unrelated card would be "two pair."
     TwoPair,
     /// 9. One Pair
-    /// 
+    ///
     /// Two cards of the same rank and three unrelated cards. An example would be two 7s and three unrelated cards.
     OnePair,
     /// 10. High Card
@@ -48,8 +48,8 @@ pub enum Rank {
 
 pub struct MatchHandEvaluator;
 
-/// The majestic [MatchHandEvaluator] implementation. 
-/// 
+/// The majestic [MatchHandEvaluator] implementation.
+///
 /// It examines the properties of a hand using array matching and struct matching to determine which rank the hand belongs to.
 ///
 ///   
@@ -72,7 +72,7 @@ impl MatchHandEvaluator {
                 Rank::RoyalFlush
             }
             [Card { suit: s1, val: v1 }, Card { suit: s2, val: v2 }, Card { suit: s3, val: v3 }, Card { suit: s4, val: v4 }, Card { suit: s5, val: v5 }]
-                if Self::seq(*v1,*v2,*v3,*v4,*v5) && Self::suits(s1, s2, s3, s4, s5) =>
+                if Self::seq(*v1, *v2, *v3, *v4, *v5) && Self::suits(s1, s2, s3, s4, s5) =>
             {
                 Rank::StraightFlush
             }
@@ -81,12 +81,12 @@ impl MatchHandEvaluator {
             {
                 Rank::StraightFlush // special case with Ace as 1
             }
-            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 && v2 == v3 && v3 == v4 || v2 == v3 && v3 == v4 && v4 == v5) =>
             {
                 Rank::FourOfAKind
             }
-            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 && v2 == v3 && v4 == v5 || v3 == v4 && v4 == v5 && v1 == v2) =>
             {
                 Rank::FullHouse
@@ -96,17 +96,27 @@ impl MatchHandEvaluator {
             {
                 Rank::Flush
             }
-            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+            //
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+                if Self::seq(*v1, *v2, *v3, *v4, *v5) =>
+            {
+                Rank::Straight
+            }
+            [Card { val: 14, .. }, Card { val: 5, .. }, Card { val: 4, .. }, Card { val: 3, .. }, Card { val: 2, .. }] =>
+            {
+                Rank::Straight // special case with Ace as 1
+            }
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 && v2 == v3 || v3 == v4 && v4 == v5) =>
             {
                 Rank::ThreeOfAKind
             }
-            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 && v3 == v4 || v2 == v3 && v4 == v5) =>
             {
                 Rank::TwoPair
             }
-            [Card { val : v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
+            [Card { val: v1, .. }, Card { val: v2, .. }, Card { val: v3, .. }, Card { val: v4, .. }, Card { val: v5, .. }]
                 if (v1 == v2 || v2 == v3 || v3 == v4 || v4 == v5) =>
             {
                 Rank::OnePair
@@ -122,10 +132,10 @@ impl MatchHandEvaluator {
         c0 == c1 && c1 == c2 && c2 == c3 && c3 == c4
     }
 
-    /// function that checks if 5 given card ranks are a numeric sequence 
+    /// function that checks if 5 given card ranks are a numeric sequence
     ///
-    fn seq(v0 : u8, v1 : u8, v2 : u8, v3 : u8, v4 : u8) -> bool {
-        v0 == (v1+1) && v1 == (v2+1) && v2 == (v3+1) && v3 == (v4+1)
+    fn seq(v0: u8, v1: u8, v2: u8, v3: u8, v4: u8) -> bool {
+        v0 == (v1 + 1) && v1 == (v2 + 1) && v2 == (v3 + 1) && v3 == (v4 + 1)
     }
 }
 
@@ -139,10 +149,10 @@ macro_rules! assert_rank {
 #[cfg(test)]
 mod test {
     use super::MatchHandEvaluator;
+    use super::Rank;
     use crate::card::{Card, Hand};
     use crate::hand;
     use crate::newcard;
-    use super::Rank;
 
     #[test]
     fn rank_royal_flush() {
@@ -191,7 +201,7 @@ mod test {
 
     #[test]
     fn rank_seq() {
-        assert_eq!(MatchHandEvaluator::seq(14, 13, 12, 11, 10),true);
-        assert_eq!(MatchHandEvaluator::seq(13, 14, 12, 11, 5),false);
+        assert_eq!(MatchHandEvaluator::seq(14, 13, 12, 11, 10), true);
+        assert_eq!(MatchHandEvaluator::seq(13, 14, 12, 11, 5), false);
     }
 }
