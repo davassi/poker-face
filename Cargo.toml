@@ -16,6 +16,9 @@ keywords = [
   "game",
   "cards",
 ]
+exclude = [
+    ".github/workflows/rust.yml",
+]
 
 [dependencies]
 clap = { version = "4.3.21", features = ["derive"] }
