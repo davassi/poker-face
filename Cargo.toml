@@ -2,7 +2,7 @@
 name = "poker-face"
 version = "0.1.0"
 edition = "2021"
-description = "A blazing fast library for the evaluation of Poker hands with lookup tables and perfect hashing"
+description = "A hand evaluator for Texas Hold'em poker, using the Rust Match control flow construct."
 repository = "https://github.com/davassi/poker-face"
 homepage = "https://github.com/davassi/poker-face"
 license = "MIT OR Apache-2.0"
@@ -16,8 +16,6 @@ keywords = [
   "game",
   "cards",
 ]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = { version = "4.3.21", features = ["derive"] }
