@@ -28,17 +28,17 @@ fn main() {
 
     println!("Player 1 has a {}", score1);
     match score1 {
-        Rank::HighCard(c) => println!("With highcard of value {c}"),
+        Rank::HighCard(c) => println!("With a highcard of value {c}"),
         _ => (),
     }
 
     println!("Player 2 has a {}", score2);
     match score2 {
-        Rank::HighCard(c) => println!("With highcard of value {c}"),
+        Rank::HighCard(c) => println!("With a highcard of value {c}"),
         _ => (),
     }
 
-    let winner = if score1 > score2 { 1 } else { 2 };
+    let winner = if score1 < score2 { 1 } else { 2 };
     println!("\n4. Celebrate the winner:");
-    println!("The winner is Player {winner}\n");
+    println!("The winner is Player {winner}!\n");
 }

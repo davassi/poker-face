@@ -103,6 +103,7 @@ impl TryFrom<&str> for Card {
 }
 
 impl Display for Card {
+    
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, " ")?;
         match self.val {
