@@ -48,11 +48,10 @@ pub enum Rank {
 
 pub struct MatchHandEvaluator;
 
-/// The majestic [MatchHandEvaluator] implementation.
+/// The core [MatchHandEvaluator] implementation.
 ///
 /// It examines the properties of a hand using array matching and struct matching to determine which rank the hand belongs to.
-///
-///   
+/// 
 impl MatchHandEvaluator {
     /// It evaluates the [Rank] of a [Hand]
     ///

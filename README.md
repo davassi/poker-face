@@ -9,7 +9,7 @@ POKER FACE - ♥️♦️♣️♠️
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
  
 Poker-Face is a rust virtusism exercise implementation of a Texas Hold'em poker engine. It evaluates the rank of a 5-card hand using the typical Rust match control flow construct. 
-It determines the Rank of a 5 card hand examining the properties using Array Matching and Struct Matching [MatchHandEvaluator].
+It determines the Rank of a 5 card hand examining the properties using Array Matching and Struct Matching [MatchHandEvaluator](https://github.com/davassi/poker-face/blob/master/src/match_evaluator.rs).
 
 Example of usage of the library, as a binary:
 
