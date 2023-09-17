@@ -121,7 +121,7 @@ impl Display for Card {
             Suit::Diamonds => write!(f, "♦️"), //D
             Suit::Clubs => write!(f, "♣️"),    //C
         }?;
-        write!(f, " ")
+        write!(f, "{}", if self.val != 10 {" "} else {""})
     }
 }
 
