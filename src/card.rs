@@ -15,7 +15,7 @@ pub enum Suit {
     Hearts,
     /// ♦️
     Diamonds,
-    /// ♦️
+    /// ♠️
     Spades,
     /// ♣️
     Clubs,
@@ -112,7 +112,7 @@ impl Display for Card {
             13 => write!(f, "K"),
             12 => write!(f, "Q"),
             11 => write!(f, "J"),
-            _ => panic!("well, that's a good reason to panic."),
+            _ => write!(f, "?"),
         }?;
         match self.suit {
             //
