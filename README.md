@@ -1,5 +1,4 @@
-POKER FACE - ♥️♦️♣️♠️
-===========================
+# POKER FACE - ♥️♦️♣️♠️
 
 [<img alt="github" src="https://img.shields.io/badge/github-davassi/davassi?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/davassi/poker-face)
 [<img alt="build status" src="https://github.com/davassi/poker-face/actions/workflows/rust.yml/badge.svg" height="20">](https://github.com/davassi/poker-face/actions?query=branch%3Amaster)
@@ -7,76 +6,147 @@ POKER FACE - ♥️♦️♣️♠️
 [<img alt="docs.rs" src="https://img.shields.io/docsrs/poker-face?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/poker-face)
 [![Downloads](https://img.shields.io/crates/d/poker-face.svg)](https://crates.io/crates/poker-face)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
- 
-Poker-Face is a rust virtusism exercise implementation of a Texas Hold'em poker engine. It evaluates the rank of a 5-card hand using the typical Rust match control flow construct. 
-It determines the Rank of a 5 card hand examining the properties using Array Matching and Struct Matching [MatchHandEvaluator](https://github.com/davassi/poker-face/blob/master/src/match_evaluator.rs).
 
-Example of usage of the library, as a binary:
+A fast and idiomatic Rust implementation of a Texas Hold'em poker hand evaluator. This library showcases Rust's powerful pattern matching capabilities by evaluating 5-card poker hands using native `match` control flow with array and struct patterns.
 
-```rust
-Poker Face 0.1.0 - 🦀 for ♠️ ♣️ ♥️ ♦️
-Prehashing cards...
+## Features
 
-1. Let's shuffle a deck...
- J♥️   7♠️   9♠️   10♥️  5♥️   K♦️   K♣️   K♥️   Q♦️   6♥️   3♥️   J♦️   4♥️  
- A♦️   J♣️   9♣️   5♠️   2♠️   4♣️   5♦️   3♦️   5♣️   6♦️   J♠️   Q♠️   4♠️  
- 10♠️  7♣️   9♥️   7♥️   9♦️   3♠️   A♣️   A♥️   7♦️   2♦️   10♣️  6♣️   4♦️  
- K♠️   A♠️   8♣️   8♥️   Q♥️   8♦️   2♣️   2♥️   3♣️   Q♣️   6♠️   8♠️   10♦️ 
+- **Pattern-Driven Evaluation**: Uses Rust's `match` expressions with array and struct patterns for clean, readable hand evaluation
+- **Comprehensive Hand Rankings**: Supports all standard poker hands from High Card to Royal Flush
+- **Convenient Macros**: Ergonomic macros (`hand!`, `newcard!`, `assert_rank!`) for working with cards and hands
+- **CLI Tool Included**: Interactive command-line interface for testing and demonstrations
+- **Well-Tested**: 28+ unit tests covering edge cases and hand ranking scenarios
+- **Zero-Cost Abstractions**: Fast evaluation using Rust's compile-time optimizations
 
-2. Let's take (actually, borrow) 2 hands of 5 cards each from the deck
-Player 1 has:  J♥️   7♠️   9♠️   10♥️  5♥️  
+See the [MatchHandEvaluator](https://github.com/davassi/poker-face/blob/master/src/match_evaluator.rs) implementation for details on the pattern-matching approach.
 
-Player 2 has:  K♦️   K♣️   K♥️   Q♦️   6♥️  
+## Installation
 
+Add poker-face to your `Cargo.toml`:
 
-3. Let's evaluate the hands...
-Sorted:  J♥️   10♥️  9♠️   7♠️   5♥️  
-
-Sorted:  K♥️   K♣️   K♦️   Q♦️   6♥️  
-
-Player 1 has a [HighCard with a highcard of value  J♥️] 
-Player 2 has a [ThreeOfAKind]
-
-4. Celebrate the winner:
-The winner is Player 2!
-
-
+```toml
+[dependencies]
+poker-face = "0.2.0"
 ```
 
-As a library, there are some handy macros (newcard!, hand!, assert_rank!) implemented to deal with cards, hands and ranks. Example:
+Or use cargo:
+
+```bash
+cargo add poker-face
+```
+
+## Quick Start
+
+### Using as a Library
+
+The library provides convenient macros for working with poker hands:
 
 ```rust
-    assert_rank!(hand!["Ad","Kd","Qd","Jd","10d"], Rank::RoyalFlush);
+use pokerface::{hand, newcard, assert_rank, Rank, Card, Suit};
 
+fn main() {
+    // Create and evaluate hands using the hand! macro
+    let royal = hand!["Ad","Kd","Qd","Jd","10d"];
+    assert_eq!(Rank::evaluate(&royal), Rank::RoyalFlush);
+
+    // Create individual cards
+    let ace_hearts = newcard!["Ah"];
+    assert_eq!(ace_hearts, Card::new(14, Suit::Hearts));
+
+    // Test hand rankings
     assert_rank!(hand!["Kd", "Kh", "Kc", "Ks", "Qd"], Rank::FourOfAKind);
-
     assert_rank!(hand!["2d", "2h", "Qc", "Qs", "Qd"], Rank::FullHouse);
+}
 ```
 
-or 
+### Using the CLI Tool
 
-```rust
-    assert_eq!(newcard!["Ah"], Card::new(14, Suit::Hearts));
-```
+The package includes an interactive command-line tool for demonstrations:
 
-## Execute
+```bash
+# Run directly with cargo
+cargo run -q
 
-To run it from cargo, just type:
-
-```console
-cargo run -q -- 
-```
-
-or to build and install a release from the code:
-
-```console
+# Or build and install
 cargo build --release
 cargo install --path .
-./target/release/poker-face
+pokerface
 ```
 
-## Contribution
+Example output:
 
-If you have any suggestions for features (i.e. more functionality to implement), or if you find any problems in the code, design, interface, etc., please feel free to share them on our [GitHub](https://github.com/davassi/poker-face/issues).
+```
+Poker Face - 🦀 for ♠️ ♣️ ♥️ ♦️
 
-I really appreciate your feedback!
+1. Let's shuffle a deck...
+2. Let's take 2 hands of 5 cards each from the deck
+   Player 1 has:  J♥️   10♥️  9♠️   7♠️   5♥️
+   Player 2 has:  K♥️   K♣️   K♦️   Q♦️   6♥️
+
+3. Let's evaluate the hands...
+   Player 1 has a [HighCard with a highcard of value J♥️]
+   Player 2 has a [ThreeOfAKind]
+
+4. Celebrate the winner:
+   The winner is Player 2!
+```
+
+## Supported Hand Rankings
+
+The evaluator recognizes all standard Texas Hold'em poker hands:
+
+- **Royal Flush**: A♠ K♠ Q♠ J♠ 10♠
+- **Straight Flush**: 9♥ 8♥ 7♥ 6♥ 5♥
+- **Four of a Kind**: K♦ K♣ K♥ K♠ Q♦
+- **Full House**: Q♠ Q♥ Q♦ 3♣ 3♦
+- **Flush**: A♣ J♣ 8♣ 4♣ 3♣
+- **Straight**: 10♦ 9♠ 8♥ 7♣ 6♦
+- **Three of a Kind**: 7♥ 7♦ 7♠ K♣ 2♠
+- **Two Pair**: J♠ J♦ 4♥ 4♣ 9♠
+- **One Pair**: 10♥ 10♣ A♠ 5♦ 3♥
+- **High Card**: A♦ K♣ 8♥ 5♠ 2♦
+
+## How It Works
+
+Poker-Face uses Rust's pattern matching to evaluate hands in a readable and efficient way. Instead of using lookup tables or bitwise operations, it leverages Rust's structural pattern matching on arrays and structs. This approach makes the code:
+
+- **Readable**: Each hand type is clearly expressed as a pattern
+- **Maintainable**: Easy to understand and modify
+- **Type-Safe**: Compile-time guarantees prevent errors
+- **Performant**: Zero-cost abstractions mean no runtime overhead
+
+Check out the [MatchHandEvaluator](https://github.com/davassi/poker-face/blob/master/src/match_evaluator.rs) source to see pattern matching in action.
+
+## API Documentation
+
+Full API documentation is available on [docs.rs](https://docs.rs/poker-face).
+
+Key types and functions:
+- `Card`: Represents a playing card with rank and suit
+- `Rank`: Enum representing all poker hand rankings
+- `hand!`: Macro for creating hands from string notation
+- `newcard!`: Macro for creating individual cards
+- `assert_rank!`: Test macro for validating hand rankings
+
+## Contributing
+
+Contributions are welcome! If you have suggestions for new features or find any issues, please:
+
+1. Check existing [issues](https://github.com/davassi/poker-face/issues) first
+2. Open a new issue to discuss your idea or bug report
+3. Submit a pull request with your changes
+
+All feedback is appreciated!
+
+## License
+
+Licensed under either of:
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
+
+## Acknowledgments
+
+Built with Rust 🦀 for poker enthusiasts ♠️ ♣️ ♥️ ♦️
