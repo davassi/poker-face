@@ -302,6 +302,21 @@ mod test {
     }
 
     #[test]
+    fn rank_suits() {
+        use crate::card::Suit;
+        // All same suit - should return true
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Hearts, &Suit::Hearts, &Suit::Hearts, &Suit::Hearts, &Suit::Hearts), true);
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Spades, &Suit::Spades, &Suit::Spades, &Suit::Spades, &Suit::Spades), true);
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Diamonds, &Suit::Diamonds, &Suit::Diamonds, &Suit::Diamonds, &Suit::Diamonds), true);
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Clubs, &Suit::Clubs, &Suit::Clubs, &Suit::Clubs, &Suit::Clubs), true);
+
+        // Mixed suits - should return false
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Hearts, &Suit::Diamonds, &Suit::Hearts, &Suit::Hearts, &Suit::Hearts), false);
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Spades, &Suit::Spades, &Suit::Spades, &Suit::Spades, &Suit::Clubs), false);
+        assert_eq!(MatchHandEvaluator::suits(&Suit::Hearts, &Suit::Clubs, &Suit::Diamonds, &Suit::Spades, &Suit::Hearts), false);
+    }
+
+    #[test]
     fn rank_comparison_order() {
         // Test that hand rankings compare correctly using derived PartialOrd
         // Note: The enum is declared from best to worst, so better hands are "less than" in comparison
@@ -347,5 +362,113 @@ mod test {
         assert_rank!(hand!["9d", "8h", "6c", "5s", "4d"], Rank::HighCard(newcard!["9d"]));
         // Test wheel straight with mixed suits
         assert_rank!(hand!["5c", "4h", "3d", "2s", "Ah"], Rank::Straight);
+    }
+
+    #[test]
+    fn rank_unsorted_hands() {
+        // Test that hands in random order get sorted and evaluated correctly
+        // Royal flush in random order
+        assert_rank!(hand!["10d", "Jd", "Ad", "Kd", "Qd"], Rank::RoyalFlush);
+        // Four of a kind in random order
+        assert_rank!(hand!["7h", "7d", "7c", "2s", "7s"], Rank::FourOfAKind);
+        // Full house in random order
+        assert_rank!(hand!["Qh", "9d", "Qc", "9s", "Qs"], Rank::FullHouse);
+        // Straight in random order
+        assert_rank!(hand!["6d", "8h", "7c", "5s", "9d"], Rank::Straight);
+        // Two pair in random order
+        assert_rank!(hand!["3h", "Kd", "3c", "Ks", "9d"], Rank::TwoPair);
+        // High card in random order
+        assert_rank!(hand!["2h", "5d", "9c", "Ks", "7d"], Rank::HighCard(newcard!["Ks"]));
+    }
+
+    #[test]
+    fn rank_boundary_cases() {
+        // Almost a straight flush but one card breaks suit (should be straight)
+        assert_rank!(hand!["9d", "8d", "7d", "6d", "5h"], Rank::Straight);
+        // Almost a straight flush but one card breaks sequence (should be flush)
+        assert_rank!(hand!["9d", "8d", "7d", "6d", "4d"], Rank::Flush);
+        // Almost four of a kind (should be three of a kind)
+        assert_rank!(hand!["Kd", "Kh", "Kc", "Qs", "Jd"], Rank::ThreeOfAKind);
+        // Almost full house (should be three of a kind)
+        assert_rank!(hand!["Kd", "Kh", "Kc", "Qs", "Jd"], Rank::ThreeOfAKind);
+        // Almost two pair (should be one pair)
+        assert_rank!(hand!["Kd", "Kh", "Qc", "Js", "10d"], Rank::OnePair);
+        // Almost a straight (missing one card in sequence)
+        assert_rank!(hand!["9d", "8h", "6c", "5s", "4d"], Rank::HighCard(newcard!["9d"]));
+    }
+
+    #[test]
+    fn rank_high_card_returns_highest() {
+        // Verify that HighCard returns the actual highest card
+        let mut hand1 = hand!["Ah", "Kd", "Qc", "Js", "9h"];
+        let rank1 = MatchHandEvaluator::match_eval(&mut hand1);
+        assert_eq!(rank1, Rank::HighCard(newcard!["Ah"]));
+
+        let mut hand2 = hand!["Kh", "Qd", "Jc", "10s", "8h"];
+        let rank2 = MatchHandEvaluator::match_eval(&mut hand2);
+        assert_eq!(rank2, Rank::HighCard(newcard!["Kh"]));
+
+        let mut hand3 = hand!["9h", "7d", "5c", "3s", "2h"];
+        let rank3 = MatchHandEvaluator::match_eval(&mut hand3);
+        assert_eq!(rank3, Rank::HighCard(newcard!["9h"]));
+
+        // High card with Ace (even when Ace could be low in wheel)
+        let mut hand4 = hand!["Ah", "Kd", "Jc", "9s", "7h"];
+        let rank4 = MatchHandEvaluator::match_eval(&mut hand4);
+        assert_eq!(rank4, Rank::HighCard(newcard!["Ah"]));
+    }
+
+    #[test]
+    fn rank_pattern_matching_priority() {
+        // Test that pattern matching priority works correctly
+        // When a hand could match multiple patterns, ensure correct rank is chosen
+
+        // Full house should be detected, not three of a kind
+        assert_rank!(hand!["Ad", "Ah", "Ac", "Ks", "Kd"], Rank::FullHouse);
+
+        // Four of a kind should be detected, not full house or three of a kind
+        assert_rank!(hand!["Ad", "Ah", "Ac", "As", "Kd"], Rank::FourOfAKind);
+
+        // Straight flush should be detected, not straight or flush
+        assert_rank!(hand!["9d", "8d", "7d", "6d", "5d"], Rank::StraightFlush);
+
+        // Royal flush should be detected, not straight flush
+        assert_rank!(hand!["Ad", "Kd", "Qd", "Jd", "10d"], Rank::RoyalFlush);
+
+        // Two pair should be detected, not one pair
+        assert_rank!(hand!["Kd", "Kh", "Jc", "Js", "10d"], Rank::TwoPair);
+    }
+
+    #[test]
+    fn rank_all_low_cards() {
+        // Test hands with only low-value cards
+        assert_rank!(hand!["6d", "5h", "4c", "3s", "2d"], Rank::Straight);
+        assert_rank!(hand!["5d", "5h", "4c", "3s", "2d"], Rank::OnePair);
+        assert_rank!(hand!["6d", "5h", "4c", "4s", "2d"], Rank::OnePair);
+        assert_rank!(hand!["5d", "5h", "4c", "4s", "2d"], Rank::TwoPair);
+        assert_rank!(hand!["5d", "5h", "5c", "4s", "2d"], Rank::ThreeOfAKind);
+    }
+
+    #[test]
+    fn rank_all_high_cards() {
+        // Test hands with only high-value cards (10 and above)
+        assert_rank!(hand!["Ad", "Kh", "Qc", "Js", "10d"], Rank::Straight);
+        assert_rank!(hand!["Ad", "Ah", "Kc", "Qs", "Jd"], Rank::OnePair);
+        assert_rank!(hand!["Kd", "Kh", "Qc", "Qs", "Jd"], Rank::TwoPair);
+        assert_rank!(hand!["Qd", "Qh", "Qc", "Ks", "Jd"], Rank::ThreeOfAKind);
+        assert_rank!(hand!["Kd", "Kh", "Kc", "Ks", "Ad"], Rank::FourOfAKind);
+    }
+
+    #[test]
+    fn rank_wheel_variations() {
+        // Test various wheel (A-2-3-4-5) configurations
+        // Wheel straight (A-low)
+        assert_rank!(hand!["5c", "4h", "3d", "2s", "Ah"], Rank::Straight);
+        // Wheel straight flush (A-low, same suit)
+        assert_rank!(hand!["5d", "4d", "3d", "2d", "Ad"], Rank::StraightFlush);
+        // Not a wheel - Ace is high here
+        assert_rank!(hand!["Ad", "6h", "5c", "4s", "3d"], Rank::HighCard(newcard!["Ad"]));
+        // Almost wheel - missing the 5
+        assert_rank!(hand!["4c", "3h", "2d", "As", "Kh"], Rank::HighCard(newcard!["As"]));
     }
 }
