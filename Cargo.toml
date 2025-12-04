@@ -1,6 +1,6 @@
 [package]
 name = "poker-face"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A hand evaluator for Texas Hold'em poker, using the Rust Match control flow construct."
 repository = "https://github.com/davassi/poker-face"
